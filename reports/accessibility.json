@@ -1,0 +1,33 @@
+{
+  "checkedAt": "2026-11-10T14:58:46.588Z",
+  "results": [
+    {
+      "name": "desktop",
+      "violations": []
+    },
+    {
+      "name": "Player comparison",
+      "violations": []
+    },
+    {
+      "name": "How trade analysis works",
+      "violations": []
+    },
+    {
+      "name": "Season snapshot",
+      "violations": []
+    },
+    {
+      "name": "Review availability assumptions",
+      "violations": []
+    },
+    {
+      "name": "roster picker",
+      "violations": []
+    },
+    {
+      "name": "mobile",
+      "violations": []
+    }
+  ]
+}

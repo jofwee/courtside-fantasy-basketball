@@ -1,0 +1,310 @@
+{
+  "started_at": "2026-11-10T13:50:11.760707+00:00",
+  "checks": [
+    {
+      "name": "read fantasy_data_snapshots as backend",
+      "passed": true
+    },
+    {
+      "name": "read fantasy_current_datasets as backend",
+      "passed": true
+    },
+    {
+      "name": "read fantasy_refresh_runs as backend",
+      "passed": true
+    },
+    {
+      "name": "read fantasy_current_datasets as public",
+      "passed": true
+    },
+    {
+      "name": "requests without an API key are denied",
+      "passed": true
+    },
+    {
+      "name": "public cannot read refresh logs",
+      "passed": true
+    },
+    {
+      "name": "read current-version pointer",
+      "passed": true
+    },
+    {
+      "name": "source scoring identities reconcile across the eligible pool",
+      "passed": true
+    },
+    {
+      "name": "source supplies a complete 13-player test roster",
+      "passed": true
+    },
+    {
+      "name": "backend stages player_stats snapshot",
+      "passed": true
+    },
+    {
+      "name": "public cannot see unpublished staging snapshot",
+      "passed": true
+    },
+    {
+      "name": "public cannot execute publication function",
+      "passed": true
+    },
+    {
+      "name": "backend publishes sample atomically",
+      "passed": true
+    },
+    {
+      "name": "read fantasy_data_snapshots as public",
+      "passed": true
+    },
+    {
+      "name": "public reads explicitly labeled imported sample",
+      "passed": true
+    },
+    {
+      "name": "all imported stat fields survive database round-trip",
+      "passed": true
+    },
+    {
+      "name": "public cannot insert snapshots",
+      "passed": true
+    },
+    {
+      "name": "public cannot change current-version pointers",
+      "passed": true
+    },
+    {
+      "name": "trade delta agrees with source totals: pts",
+      "passed": true
+    },
+    {
+      "name": "trade delta agrees with source totals: reb",
+      "passed": true
+    },
+    {
+      "name": "trade delta agrees with source totals: ast",
+      "passed": true
+    },
+    {
+      "name": "trade delta agrees with source totals: stl",
+      "passed": true
+    },
+    {
+      "name": "trade delta agrees with source totals: blk",
+      "passed": true
+    },
+    {
+      "name": "volume-weighted fg% reconciles before",
+      "passed": true
+    },
+    {
+      "name": "volume-weighted fg% reconciles after",
+      "passed": true
+    },
+    {
+      "name": "volume-weighted ft% reconciles before",
+      "passed": true
+    },
+    {
+      "name": "volume-weighted ft% reconciles after",
+      "passed": true
+    },
+    {
+      "name": "three-pointer trade delta reconciles",
+      "passed": true
+    },
+    {
+      "name": "backend stages player_stats snapshot",
+      "passed": true
+    },
+    {
+      "name": "database rejects invalid shooting import",
+      "passed": true
+    },
+    {
+      "name": "read current-version pointer",
+      "passed": true
+    },
+    {
+      "name": "failed import preserves last valid current snapshot",
+      "passed": true
+    },
+    {
+      "name": "public cannot update snapshots",
+      "passed": true
+    },
+    {
+      "name": "public cannot delete snapshots",
+      "passed": true
+    },
+    {
+      "name": "public cannot insert refresh records",
+      "passed": true
+    },
+    {
+      "name": "backend stages player_stats snapshot",
+      "passed": true
+    },
+    {
+      "name": "database rejects duplicate IDs",
+      "passed": true
+    },
+    {
+      "name": "backend stages player_stats snapshot",
+      "passed": true
+    },
+    {
+      "name": "read current-version pointer",
+      "passed": true
+    },
+    {
+      "name": "new valid import replaces current snapshot",
+      "passed": true
+    },
+    {
+      "name": "superseded version is hidden from public reads",
+      "passed": true
+    },
+    {
+      "name": "backend stages player_stats snapshot",
+      "passed": true
+    },
+    {
+      "name": "older retrieval cannot overwrite a newer snapshot",
+      "passed": true
+    },
+    {
+      "name": "read current-version pointer",
+      "passed": true
+    },
+    {
+      "name": "all failed imports leave the last valid dataset usable",
+      "passed": true
+    },
+    {
+      "name": "backend records sanitized failed refresh",
+      "passed": true
+    },
+    {
+      "name": "test log no longer references staging cleanup rows",
+      "passed": true
+    },
+    {
+      "name": "clean up own invalid staging snapshot",
+      "passed": true
+    },
+    {
+      "name": "clean up own invalid staging snapshot",
+      "passed": true
+    },
+    {
+      "name": "clean up own invalid staging snapshot",
+      "passed": true
+    }
+  ],
+  "source": {
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_nba_player_season_stats/player_season_stats_2027.csv",
+    "bytes": 3951962,
+    "season": 2027,
+    "eligible_players": 360,
+    "selected_players": 14
+  },
+  "trade": {
+    "roster": [
+      "Luka Doncic",
+      "AJ Dybantsa",
+      "AJ Green",
+      "Aaron Gordon",
+      "Aaron Nesmith",
+      "Aaron Wiggins",
+      "Ace Bailey",
+      "Aday Mara",
+      "Adem Bona",
+      "Ajay Mitchell",
+      "Al Horford",
+      "Alex Caruso",
+      "Alex Karaban"
+    ],
+    "give": "Luka Doncic",
+    "receive": "Giannis Antetokounmpo",
+    "before": {
+      "pts": 156.49520202020202,
+      "reb": 56.49592352092352,
+      "ast": 30.31046176046176,
+      "stl": 10.184920634920635,
+      "blk": 7.767207792207792,
+      "three_pm": 19.72099567099567,
+      "fg_pct": 46.50811181308135,
+      "ft_pct": 80.39262824096645
+    },
+    "after": {
+      "pts": 144.69520202020203,
+      "reb": 61.49592352092352,
+      "ast": 27.71046176046176,
+      "stl": 9.184920634920635,
+      "blk": 8.067207792207792,
+      "three_pm": 14.720995670995672,
+      "fg_pct": 47.48512397428043,
+      "ft_pct": 72.24937742377006
+    }
+  },
+  "published_sample_id": "c51e45b3-8827-4aa3-9261-58518d451b06",
+  "elapsed_seconds": 14.44,
+  "limitations": [
+    "Localhost-to-hosted-Supabase only; no Vercel or Supabase Edge Function execution tested.",
+    "No user-login session test was performed; anonymous publishable-key access was tested.",
+    "14-player imported sample, not a live league-wide refresh.",
+    "Injury automation and public-release data rights remain separate unresolved checks."
+  ],
+  "success": true,
+  "finished_at": "2026-11-10T13:50:26.198026+00:00",
+  "created_snapshot_ids": [
+    "0295ce4e-52e3-4f00-a4c4-1e373ab1586e",
+    "6b1b73e5-0169-47ce-a61f-3017773445a8",
+    "08f7a900-df3e-4d14-ab97-a9437673470c",
+    "c51e45b3-8827-4aa3-9261-58518d451b06",
+    "cc8f5d67-81c5-472f-8c32-3d14fe9952fe"
+  ],
+  "localhost": {
+    "base_url": "http://127.0.0.1:8765",
+    "checks": [
+      {
+        "name": "localhost reaches hosted Supabase",
+        "passed": true
+      },
+      {
+        "name": "localhost preserves imported-sample labeling",
+        "passed": true
+      },
+      {
+        "name": "HTTP endpoint returns all eight categories",
+        "passed": true
+      },
+      {
+        "name": "HTTP trade agrees with independently checked source calculation",
+        "passed": true
+      },
+      {
+        "name": "unknown observation time is disclosed instead of presented as fresh",
+        "passed": true
+      },
+      {
+        "name": "environment file is not served",
+        "passed": true
+      },
+      {
+        "name": "local project files are not served",
+        "passed": true
+      },
+      {
+        "name": "local API rejects writes",
+        "passed": true
+      },
+      {
+        "name": "HTTP responses contain no API key values",
+        "passed": true
+      }
+    ],
+    "success": true
+  }
+}

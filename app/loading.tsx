@@ -1,0 +1,1 @@
+export default function Loading() { return <main className="loading-page" aria-busy="true"><span className="brand">courtside<span>↗</span></span><div className="loading-court"/><p>Getting your trade desk ready…</p></main>; }

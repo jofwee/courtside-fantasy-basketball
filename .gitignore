@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+node_modules/
+.next/
+coverage/
+*.log
+__pycache__/
+*.py[cod]
+*.tsbuildinfo
+test-results/
+playwright-report/

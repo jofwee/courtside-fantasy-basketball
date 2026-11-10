@@ -1,0 +1,53 @@
+{
+  "players": {
+    "snapshot_id": "fcb7bf68-4734-410f-b74d-813d93982fc9",
+    "records": 530
+  },
+  "player_stats": {
+    "snapshot_id": "e781dab5-0848-4f07-b069-ba95add4c93f",
+    "records": 456
+  },
+  "schedule": {
+    "snapshot_id": "6e194ca7-0b1c-4c35-9fb5-edcefc0712fc",
+    "records": 1200
+  },
+  "injuries": {
+    "snapshot_id": "87ba829b-b2c5-4a9a-90fa-6b8383371a7d",
+    "records": 63
+  },
+  "source_files": {
+    "player_season_stats_2027.csv": {
+      "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_nba_player_season_stats/player_season_stats_2027.csv",
+      "bytes": 3951962
+    },
+    "rosters_2027.csv": {
+      "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/nba_stats_rosters/rosters_2027.csv",
+      "bytes": 76353
+    },
+    "nba_team_crosswalk_2027.csv": {
+      "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/nba_crosswalk/nba_team_crosswalk_2027.csv",
+      "bytes": 4763
+    },
+    "nba_schedule_2027.csv": {
+      "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_nba_schedules/nba_schedule_2027.csv",
+      "bytes": 2924972
+    },
+    "injury_report_2027.csv": {
+      "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/nba_stats_injury_report/injury_report_2027.csv",
+      "bytes": 6709232
+    },
+    "nba_player_crosswalk_2027.csv": {
+      "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/nba_crosswalk/nba_player_crosswalk_2027.csv",
+      "bytes": 76246
+    },
+    "nba_player_crosswalk_2026.csv": {
+      "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/nba_crosswalk/nba_player_crosswalk_2026.csv",
+      "bytes": 110060
+    },
+    "nba_player_crosswalk_2025.csv": {
+      "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/nba_crosswalk/nba_player_crosswalk_2025.csv",
+      "bytes": 109115
+    }
+  },
+  "imported_at": "2026-11-10T13:58:41.475214+00:00"
+}
