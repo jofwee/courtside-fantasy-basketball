@@ -111,6 +111,7 @@ test("the player picker supports keyboard selection", async ({ page }) => {
 });
 
 test("core screens and dialogs pass automated accessibility checks", async ({ page }) => {
+  test.setTimeout(90000);
   const results: { name: string; violations: unknown[] }[] = [];
   const audit = async (name: string) => {
     const result = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
@@ -119,16 +120,40 @@ test("core screens and dialogs pass automated accessibility checks", async ({ pa
     writeFileSync("reports/accessibility.json", JSON.stringify({ checkedAt: new Date().toISOString(), results }, null, 2));
     expect(result.violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) }))).toEqual([]);
   };
-  await audit("desktop");
-  for (const name of ["Player comparison", "How trade analysis works", "Season snapshot", "Review availability assumptions"]) {
-    await page.getByRole("button", { name, exact: true }).click();
-    await expect(page.getByRole("dialog")).toBeVisible();
-    await audit(name);
-    await page.getByRole("button", { name: "Close dialog" }).click();
+  for (const theme of ["light", "dark"]) {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    if (await page.locator("html").getAttribute("data-theme") !== theme) await page.getByRole("button", { name: `Switch to ${theme} mode` }).click();
+    await audit(`${theme}: desktop`);
+    for (const name of ["Player comparison", "How trade analysis works", "Season snapshot", "Review availability assumptions"]) {
+      await page.getByRole("button", { name, exact: true }).click();
+      await expect(page.getByRole("dialog")).toBeVisible();
+      await audit(`${theme}: ${name}`);
+      await page.getByRole("button", { name: "Close dialog" }).click();
+    }
+    await page.getByRole("button", { name: /My roster/ }).click();
+    await audit(`${theme}: roster picker`);
+    await page.keyboard.press("Escape");
+    await page.evaluate(() => { (document.activeElement as HTMLElement)?.blur(); window.scrollTo({ top: 0, behavior: "instant" }); });
+    await page.screenshot({ path: `reports/screenshots/${theme}-desktop.png`, fullPage: true });
+    await page.setViewportSize({ width: 375, height: 900 });
+    await audit(`${theme}: mobile`);
+    await page.screenshot({ path: `reports/screenshots/${theme}-mobile.png`, fullPage: true });
   }
-  await page.getByRole("button", { name: /My roster/ }).click();
-  await audit("roster picker");
-  await page.keyboard.press("Escape");
-  await page.setViewportSize({ width: 375, height: 900 });
-  await audit("mobile");
+});
+
+test("theme follows the device until chosen and remembers the choice", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.getByRole("button", { name: "Switch to light mode" }).click();
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await page.getByRole("button", { name: "Switch to dark mode" }).click();
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  for (const width of [320, 375, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect(page.getByRole("button", { name: "Switch to light mode" })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
 });

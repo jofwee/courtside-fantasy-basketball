@@ -475,3 +475,9 @@ The server-only data loader reads current published snapshots using the publisha
 - TypeScript checks and the production build pass. Browser screenshots are in `reports/screenshots/`.
 
 The next step is to review the localhost app with a real roster and have the fantasy manager assess whether the explanations and category emphasis match their decisions. Before a public release, finish current injury ingestion, refresh scheduling/retention, exact-source public-use review, and Vercel runtime checks. These limitations are disclosed in the website; no plugin or additional database setup is needed for local review.
+
+## 19. Light and dark appearance
+
+Added a moon/sun toggle in the top bar, including phone layouts. The initial theme follows the device preference and a manual selection persists in browser storage. Theme initialization runs before the page content to avoid a light flash on a dark visit. The control also follows device changes until an explicit choice has been saved, synchronizes changes from other tabs, and remains usable when browser storage is blocked.
+
+The dark palette covers the analyzer, inputs, category changes, warnings, player avatars, dialogs, and loading/error states. Both themes have automated accessibility coverage across the primary page and dialogs; theme persistence and responsive control visibility are exercised in the browser suite. Data refresh behavior is unchanged: the app still reads manually imported Supabase snapshots.

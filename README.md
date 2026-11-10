@@ -21,6 +21,9 @@ system, or Vercel deployment is needed to use this version.
 
 ## What works
 
+The moon/sun button in the top bar switches between light and dark mode. The first
+visit follows the device preference; a manual choice is remembered in this browser.
+
 - Search the combined player directory and build a roster of up to 13 players.
 - Multi-player trades, trade-only analysis, partial rosters, explicit roster drops,
   and optional replacement additions.

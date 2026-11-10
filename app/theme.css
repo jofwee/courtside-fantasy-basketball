@@ -1,0 +1,49 @@
+:root { color-scheme: light; }
+.topbar-actions { display:flex; align-items:center; gap:12px; }
+.theme-toggle { display:grid; place-items:center; width:38px; height:38px; flex-shrink:0; border:1px solid var(--line); border-radius:7px; background:var(--canvas); color:var(--ink); }
+.theme-toggle:hover { border-color:var(--green); color:var(--green); }
+
+:root[data-theme="dark"] {
+  color-scheme:dark;
+  --canvas:#101814;
+  --ink:#e3ece5;
+  --muted:#a4b6a8;
+  --line:#33463a;
+  --green:#8dccaa;
+  --green-dark:#aadfbe;
+  --surface:#1a261f;
+  --raised:#202f25;
+  --soft:#24372a;
+}
+[data-theme="dark"] .sidebar { background:#12241c; border-right:1px solid var(--line); }
+[data-theme="dark"] :is(.topbar,.card,.modal,.secondary-button,.offer-card,.skip-link) { background:var(--surface); border-color:var(--line); }
+[data-theme="dark"] :is(.league-button,.roster-shortcut,.give-side,.receive-side,.result-bottom,.schedule-controls input,.schedule-controls select,.search-field,.data-stat-grid>div,.trade-value-summary,.basis-note,.offer-card>button,.comparison-search,.exchange-divider>div) { background:var(--raised); border-color:var(--line); }
+[data-theme="dark"] :is(.example-banner,.step-number,.shortcut-icon,.focus-chips button,.roster-completion,.mini-chip,.outcome-icon,.empty-icon,.guide-steps>div>span) { background:var(--soft); border-color:#425d40; }
+[data-theme="dark"] :is(.trade-side,.add-player,.empty-categories span,.option-check,.search-field>span,.loading-court) { border-color:var(--line); }
+[data-theme="dark"] .hero-symbol:before { background:var(--soft); }
+[data-theme="dark"] .hero-symbol svg { stroke:#94ae83; }
+[data-theme="dark"] .hero-symbol .hero-arrow { stroke:var(--green); }
+[data-theme="dark"] :is(.exchange-divider>span,.subtle-divider) { background:var(--line); border-color:var(--line); }
+[data-theme="dark"] :is(.eyebrow,.season-label,.hero-aside .eyebrow,.hero-aside>div>span:last-child,.breadcrumb,.breadcrumb strong,.league-button,.text-button.muted,.section-description,.hero>div>p,.package-count,.player-identity>span,.player-rate span,.roster-shortcut small,.roster-counter>span,.add-player,.trade-only-row label,.priority-details summary,.priority-details p,.builder-footnote,.category-table thead th,.category-table td,.category-full,.table-footer,.result-bottom,.outcome .eyebrow,.outcome p,.inline-note,.results-label,.context-card>p,.context-note,.context-heading>.muted,.schedule-count>div small,.schedule-count>span,.schedule-controls input,.schedule-controls select,.timezone-label,.timezone-label select,.availability-list small,.context-link,.counteroffer-header .eyebrow,.counteroffer-header p,.counteroffer-header .secondary-button,.offer-number,.offer-players small,.offer-explanation,.offer-card>button,.page-footer p,.page-footer .text-button,.footer-brand,.picker-meta,.option-name small,.option-stat,.picker-footnote,.modal-copy,.guide-steps p,.method-details p,.method-details summary,.assumption-list small,.assumption-label,.data-stat-grid span,.credit-links,.external-link,.modal-header .eyebrow,.comparison-table th:first-child,.comparison-table thead small,.comparison-table td,.basis-selector>span,.basis-selector>button,.basis-note,.icon-button,.remove-player,.result-tabs button,.picker-meta .text-button,.search-field,.search-field>span,.option-check,.result-empty p,.offers-empty) { color:var(--muted); }
+[data-theme="dark"] :is(.secondary-button,.hero-aside strong,.modal-empty h3,.search-field input,.loading-page .brand,.connection-error .brand) { color:var(--ink); }
+[data-theme="dark"] :is(.receive-side .side-label,.positive,.category-table .after-value,.table-footer .text-button,.result-tabs button[aria-selected=true],.schedule-count>div strong,.trade-value-summary p,.trade-value-summary p small,.trade-value-summary>span>small,.data-stat-grid strong,.mini-chip,.step-number,.guide-steps>div>span,.example-banner,.example-banner>span,.example-banner button,.result-empty .text-button,.example-banner svg) { color:#b1d39c; }
+[data-theme="dark"] .give-side .side-label { color:#dfb29b; }
+[data-theme="dark"] .category-abbr { color:var(--ink); }
+[data-theme="dark"] :is(.category-table th,.category-table td,.picker-option,.comparison-table th,.comparison-table td,.assumption-list>label,.external-link) { border-color:var(--line); }
+[data-theme="dark"] :is(.schedule-controls input,.schedule-controls select) { color-scheme:dark; }
+[data-theme="dark"] .change-pill.up { background:#263e2a; color:#b7dc9f; }
+[data-theme="dark"] .change-pill.down { background:#402e28; color:#f0b5a3; }
+[data-theme="dark"] .change-pill.neutral { background:var(--raised); color:var(--muted); }
+[data-theme="dark"] :is(.archive-note,.archive-badge,.data-warning,.roster-completion.needs-drop,.form-errors) { background:#332d20; border-color:#665334; color:#e6cc93; }
+[data-theme="dark"] :is(.data-warning p,.form-errors p) { color:#e6cc93; }
+[data-theme="dark"] .primary-button { color:#11261a; background:var(--green); border-color:var(--green); }
+[data-theme="dark"] .primary-button:hover { background:var(--green-dark); border-color:var(--green-dark); }
+[data-theme="dark"] :is(.focus-chips button.selected,.basis-selector>button[aria-pressed=true]) { color:#c0e3ae; background:#2b442f; border-color:#64885b; }
+[data-theme="dark"] :is(.secondary-button:hover,.roster-shortcut:hover,.add-player:hover,.picker-option:hover,.picker-option.keyboard-active,.offer-card>button:hover,.icon-button:hover) { color:#cae5bd; background:#2b3e2c; border-color:#64885b; }
+[data-theme="dark"] .option-check.checked { color:#14231a; background:#a3ce91; border-color:#a3ce91; }
+[data-theme="dark"] .modal::backdrop { background:#060e0bd1; }
+[data-theme="dark"] .avatar { background:#34483d!important; color:#d5e6d8!important; }
+[data-theme="dark"] .search-field input::placeholder { color:#a4b6a8; opacity:1; }
+[data-theme="dark"] :is(.connection-error p,.loading-page p,.modal-empty p,.empty-categories span) { color:var(--muted); }
+@media(max-width:680px) { .topbar-actions { gap:8px; } .theme-toggle { width:34px; height:34px; } }
+@media(max-width:380px) { .breadcrumb>span,.breadcrumb>svg { display:none; } }

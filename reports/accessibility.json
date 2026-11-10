@@ -1,32 +1,60 @@
 {
-  "checkedAt": "2026-11-10T14:58:46.588Z",
+  "checkedAt": "2026-11-10T17:23:04.639Z",
   "results": [
     {
-      "name": "desktop",
+      "name": "light: desktop",
       "violations": []
     },
     {
-      "name": "Player comparison",
+      "name": "light: Player comparison",
       "violations": []
     },
     {
-      "name": "How trade analysis works",
+      "name": "light: How trade analysis works",
       "violations": []
     },
     {
-      "name": "Season snapshot",
+      "name": "light: Season snapshot",
       "violations": []
     },
     {
-      "name": "Review availability assumptions",
+      "name": "light: Review availability assumptions",
       "violations": []
     },
     {
-      "name": "roster picker",
+      "name": "light: roster picker",
       "violations": []
     },
     {
-      "name": "mobile",
+      "name": "light: mobile",
+      "violations": []
+    },
+    {
+      "name": "dark: desktop",
+      "violations": []
+    },
+    {
+      "name": "dark: Player comparison",
+      "violations": []
+    },
+    {
+      "name": "dark: How trade analysis works",
+      "violations": []
+    },
+    {
+      "name": "dark: Season snapshot",
+      "violations": []
+    },
+    {
+      "name": "dark: Review availability assumptions",
+      "violations": []
+    },
+    {
+      "name": "dark: roster picker",
+      "violations": []
+    },
+    {
+      "name": "dark: mobile",
       "violations": []
     }
   ]
