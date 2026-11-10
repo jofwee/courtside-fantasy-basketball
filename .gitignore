@@ -10,3 +10,4 @@ __pycache__/
 *.tsbuildinfo
 test-results/
 playwright-report/
+reports/refresh-latest.json

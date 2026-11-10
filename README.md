@@ -54,6 +54,32 @@ To refresh the imported datasets manually, from the project root:
 python scripts/import_catalog.py
 ```
 
+For the monitored refresh used by automation (players, stats, schedules only):
+
+```powershell
+python scripts/refresh_data.py
+```
+
+GitHub Actions runs `.github/workflows/refresh-data.yml` daily at **6:17 PM
+Asia/Manila** (10:17 UTC), with a manual **Run workflow** option in the repository's
+Actions tab. GitHub scheduling is best effort and may run late. The runner reads
+three encrypted repository Actions secrets: `NEXT_PUBLIC_SUPABASE_URL`,
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `SUPABASE_SECRET_KEY`. These are separate
+from Vercel's environment settings. No credentials are committed, and the backend
+secret remains unnecessary for Vercel.
+
+The runner tests its safety checks, retries temporary download/database failures,
+validates all three core datasets before publishing, blocks large coverage drops,
+and skips snapshots whose content has not changed. Successful runs do not commit
+data or trigger a Vercel deployment. The website reads the current Supabase data
+through its existing two-minute cache.
+
+Refresh history is recorded in the private `fantasy_refresh_runs` table. Each
+workflow run also has a readable summary and a sanitized JSON artifact retained
+for 14 days. Inspect **Actions → Refresh basketball data** for failures; GitHub
+notification delivery depends on your own notification settings. There is no
+custom email/SMS alert or independent missed-run monitor.
+
 The script uses Python's standard library, downloads the selected SportsDataverse
 CSV assets, validates source identities/stat totals, and publishes each dataset
 atomically. It refuses to overwrite unrelated datasets. Details are saved in
@@ -64,8 +90,8 @@ remaining kinds before treating the collection as one release.
 The original statistical observation time is unknown; retrieval time is shown
 separately and must not be presented as live freshness. The injury data is an
 archive and only applies to its report/game dates. Six TBD game placeholders are
-excluded from team counts. Automated refreshes, current injury ingestion, retention
-jobs, and a public-release data-rights review remain unfinished. No direct ESPN
+excluded from team counts. Current injury ingestion, snapshot/log retention
+jobs, season rollover, and a public-release data-rights review remain unfinished. No direct ESPN
 scraping pipeline or paid provider subscription is installed.
 
 Credit and links to the producing repositories' declared CC BY 4.0 licenses are
@@ -79,6 +105,7 @@ npm run typecheck
 npm test
 npm run test:e2e
 npm run build
+python -m unittest discover -s tests -p 'test_refresh.py'
 ```
 
 Browser tests use installed Microsoft Edge on Windows. On other systems, install

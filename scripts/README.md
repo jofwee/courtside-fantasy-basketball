@@ -1,5 +1,14 @@
 # Data-pipeline checks
 
+For the current website's routine refresh, use `python scripts/refresh_data.py`.
+It accepts environment variables (GitHub Actions) or `.env.local` (local use),
+refreshes players/statistics/schedules, and leaves the archived injuries untouched.
+The scheduled workflow runs daily at 18:17 Philippine time; see the root README
+for monitoring, retry behavior, and remaining limitations.
+
+The proof commands below are historical diagnostics; do not use them for daily
+updates or to replace the current full catalog.
+
 These scripts verify the data connection before the full website is built. They
 use Python's standard library and the hosted Supabase schema in `supabase/setup.sql`.
 They do not require Docker, the Supabase plugin, Vercel, or npm packages.

@@ -2,7 +2,7 @@
 
 Run from the project root: python scripts/import_catalog.py
 Uses only stdlib. Replaces only the previous integration sample or this importer’s
-own datasets. Does not scrape ESPN, install jobs, or claim live injury coverage.
+own datasets. Does not scrape ESPN or claim live injury coverage.
 """
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -11,10 +11,11 @@ import hashlib
 import io
 import json
 import re
+import time
 import unicodedata
 import urllib.request
 import uuid
-import check_supabase as db
+import supabase_client as db
 
 BASE = "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/"
 MARKER = "courtside-catalog-v1"
@@ -23,9 +24,17 @@ fetched = {}
 
 def load(tag, name):
     url = BASE + tag + "/" + name
-    with urllib.request.urlopen(url, timeout=45) as response:
-        raw = response.read()
-    fetched[name] = {"url": url, "bytes": len(raw)}
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(url, timeout=45) as response:
+                raw = response.read()
+                modified = response.headers.get("Last-Modified")
+            break
+        except (urllib.error.URLError, TimeoutError, ConnectionError):
+            if attempt == 2:
+                raise RuntimeError("SOURCE_DOWNLOAD_FAILED") from None
+            time.sleep(2 ** attempt)
+    fetched[name] = {"url": url, "bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest(), "http_last_modified": modified}
     return list(csv.DictReader(io.StringIO(raw.decode("utf-8-sig"))))
 
 
@@ -40,16 +49,21 @@ def require(ok, name):
 
 
 def publish(kind, records, source, coverage, warnings):
-    status, existing = db.api("GET", f"fantasy_data_snapshots?season=eq.2027&dataset_kind=eq.{kind}&select=payload,data_mode")
+    status, existing = db.api("GET", f"fantasy_data_snapshots?season=eq.2027&dataset_kind=eq.{kind}&select=payload,data_mode", role="public")
     require(status == 200, "read existing " + kind)
     require(all(r["data_mode"] == "imported" and
                 (r["payload"].get("importer") == MARKER or r["payload"].get("proof_marker") == db.MARKER)
                 for r in existing), "preserve unrelated " + kind + " datasets")
+    fingerprint = content_hash(records, source, coverage, warnings)
+    if existing and content_hash(existing[0]["payload"]["records"], source, existing[0]["payload"].get("coverage", {}), existing[0]["payload"].get("warnings", [])) == fingerprint:
+        status, pointers = db.api("GET", f"fantasy_current_datasets?season=eq.2027&dataset_kind=eq.{kind}&select=snapshot_id")
+        require(status == 200 and len(pointers) == 1, "read unchanged pointer")
+        return {"snapshot_id": pointers[0]["snapshot_id"], "records": len(records), "changed": False}
     row = {
         "id": str(uuid.uuid4()), "dataset_kind": kind, "season": 2027,
         "source_url": source, "source_updated_at": None,
         "retrieved_at": datetime.now(timezone.utc).isoformat(), "data_mode": "imported",
-        "payload": {"importer": MARKER, "records": records, "coverage": coverage, "warnings": warnings,
+        "payload": {"importer": MARKER, "content_hash": fingerprint, "records": records, "coverage": coverage, "warnings": warnings,
                     "attribution": {"source": "SportsDataverse / hoopR", "upstream": "ESPN and NBA Stats",
                                     "license": "CC BY 4.0 as declared by the producing repositories",
                                     "license_urls": ["https://github.com/sportsdataverse/hoopR-nba-data/blob/main/LICENSE.md",
@@ -60,16 +74,45 @@ def publish(kind, records, source, coverage, warnings):
     require(status == 201, "stage " + kind)
     status, _ = db.publish(row["id"])
     require(status == 200, "publish " + kind)
-    return {"snapshot_id": row["id"], "records": len(records)}
+    return {"snapshot_id": row["id"], "records": len(records), "changed": True}
 
 
-def main():
+def content_hash(records, source, coverage, warnings):
+    body = {"records": sorted(records, key=lambda r: json.dumps(r, sort_keys=True)), "source": source, "coverage": coverage, "warnings": warnings}
+    return hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+
+
+def validate_core(directory, totals, schedule, previous):
+    require(len(directory) >= 300 and len(totals) >= 130 and len(schedule) >= 1000, "CORE_COVERAGE_TOO_SMALL")
+    player_ids = [r["player_id"] for r in directory]
+    require(len(player_ids) == len(set(player_ids)), "DUPLICATE_PLAYER_IDS")
+    require(all(r["player_id"] in player_ids for r in totals), "UNMAPPED_STATISTICS")
+    require(len({r["player_id"] for r in totals}) == len(totals), "DUPLICATE_STATISTICS")
+    require(len({r["game_id"] for r in schedule}) == len(schedule), "DUPLICATE_GAMES")
+    for row in totals:
+        require(all(isinstance(v, int) and v >= 0 for k, v in row.items() if k != "player_id"), "INVALID_STAT_TOTAL")
+        require(row["gp"] > 0 and row["three_pm"] <= row["fgm"] <= row["fga"] and row["ftm"] <= row["fta"], "INVALID_SHOOTING")
+        require(row["pts"] == 2 * row["fgm"] + row["three_pm"] + row["ftm"], "INVALID_SCORING_IDENTITY")
+    teams = set()
+    for game in schedule:
+        stamp = datetime.fromisoformat(game["starts_at"].replace("Z", "+00:00"))
+        require(stamp.tzinfo is not None and 2026 <= stamp.year <= 2027, "INVALID_GAME_TIMESTAMP")
+        require(game["home_team_id"] != game["away_team_id"], "INVALID_MATCHUP")
+        teams.update((game["home_team_id"], game["away_team_id"]))
+    require(len(teams) == 30, "INCOMPLETE_TEAM_COVERAGE")
+    for kind, rows in [("players", directory), ("player_stats", totals), ("schedule", schedule)]:
+        old = previous.get(kind, 0)
+        require(not old or len(rows) >= old * 0.9, "UNEXPECTED_COVERAGE_DROP_" + kind.upper())
+
+
+def main(core_only=False):
+    fetched.clear()
     stats = load("espn_nba_player_season_stats", "player_season_stats_2027.csv")
     espn = load("espn_nba_rosters", "rosters_2027.csv")
     nba = load("nba_stats_rosters", "rosters_2027.csv")
     teams = load("nba_crosswalk", "nba_team_crosswalk_2027.csv")
     games = load("espn_nba_schedules", "nba_schedule_2027.csv")
-    injuries = load("nba_stats_injury_report", "injury_report_2027.csv")
+    injuries = [] if core_only else load("nba_stats_injury_report", "injury_report_2027.csv")
     mappings = defaultdict(set)
     for season in (2027, 2026, 2025):
         for row in load("nba_crosswalk", f"nba_player_crosswalk_{season}.csv"):
@@ -160,7 +203,7 @@ def main():
         schedule.append({"game_id":row["game_id"], "home_team_id":row["home_id"], "away_team_id":row["away_id"],
                          "starts_at":row["date"], "status":row["status_type_name"]})
 
-    latest = max(r["report_datetime"] for r in injuries)
+    latest = max((r["report_datetime"] for r in injuries), default="")
     latest_rows = [r for r in injuries if r["report_datetime"] == latest]
     listings, unmatched = [], []
     for row in latest_rows:
@@ -183,6 +226,10 @@ def main():
                          "report_local":latest, "report_timezone":"America/New_York"})
     require(len({r["listing_id"] for r in listings}) == len(listings), "unique injury listings")
     warning = ["Imported research snapshot. Underlying stat observation time is not provided."]
+    status, previous = db.api("GET", "fantasy_data_snapshots?season=eq.2027&dataset_kind=in.(players,player_stats,schedule)&select=dataset_kind,record_count,payload,data_mode", role="public")
+    require(status == 200, "READ_PREVIOUS_COVERAGE_FAILED")
+    require(all(r["data_mode"] == "imported" and (r["payload"].get("importer") == MARKER or r["payload"].get("proof_marker") == db.MARKER) for r in previous), "UNRELATED_CORE_DATASET")
+    validate_core(list(directory.values()), totals, schedule, {r["dataset_kind"]: r["record_count"] for r in previous})
     output = {}
     output["players"] = publish("players", sorted(directory.values(), key=lambda p:p["display_name"]),
                                 BASE+"espn_nba_rosters/rosters_2027.csv", {"scope":"combined NBA/ESPN directory"}, warning)
@@ -191,15 +238,18 @@ def main():
     output["schedule"] = publish("schedule", schedule, BASE+"espn_nba_schedules/nba_schedule_2027.csv",
                                  {"unassigned_games":unassigned, "season_type":"regular"},
                                  ["Future schedule is provisional; unassigned games are excluded from team counts."])
-    output["injuries"] = publish("injuries", listings, BASE+"nba_stats_injury_report/injury_report_2027.csv",
+    if not core_only:
+        output["injuries"] = publish("injuries", listings, BASE+"nba_stats_injury_report/injury_report_2027.csv",
                                  {"report_local":latest, "report_timezone":"America/New_York", "unmatched":unmatched,
                                   "unsubmitted_teams": [r["team"] for r in latest_rows if not r["report_player_name"]]},
                                  ["Historical injury report, not live availability. Verify current status before trading."])
     output["source_files"] = fetched
     output["imported_at"] = datetime.now(timezone.utc).isoformat()
     path = db.ROOT / "reports" / "catalog-import.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(output, indent=2)+"\n", encoding="utf-8")
     print(json.dumps({kind:record["records"] for kind,record in output.items() if isinstance(record,dict) and "records" in record}), flush=True)
+    return output
 
 
 if __name__ == "__main__":
