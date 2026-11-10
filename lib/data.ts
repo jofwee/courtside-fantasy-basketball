@@ -15,7 +15,7 @@ export async function loadDataset(): Promise<Dataset> {
   const directory = find("players"), stats = find("player_stats");
   if (!directory || !stats) throw new Error("The player directory has not been imported yet");
   const totals = new Map(stats.payload.records.map(r => [String(r.player_id), r as unknown as Totals]));
-  const players: Player[] = directory.payload.records.map(r => ({ id: String(r.player_id), name: String(r.display_name), teamId: String(r.team_id ?? ""), team: String(r.team ?? "—"), position: String(r.position ?? "—"), totals: totals.get(String(r.player_id)) }));
+  const players: Player[] = directory.payload.records.map(r => ({ id: String(r.player_id), name: String(r.display_name), teamId: String(r.team_id ?? ""), team: String(r.team ?? "—"), position: String(r.position ?? "—"), nbaId: r.nba_id ? String(r.nba_id) : undefined, totals: totals.get(String(r.player_id)) }));
   return { players, games: (find("schedule")?.payload.records ?? []) as unknown as Game[], injuries: (find("injuries")?.payload.records ?? []) as unknown as Injury[], season: 2027,
     retrievedAt: stats.retrieved_at, dataMode: "imported", injuryReport: String(find("injuries")?.payload.coverage?.report_local ?? "") || null,
     unassigned: (find("schedule")?.payload.coverage?.unassigned_games ?? []) as Dataset["unassigned"], snapshotIds: snapshots.map(s => s.id),

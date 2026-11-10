@@ -157,3 +157,25 @@ test("theme follows the device until chosen and remembers the choice", async ({ 
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
 });
+
+test("player headshots load from mapped NBA IDs across trade and comparison views", async ({ page }) => {
+  const photo = page.locator(".give-side .avatar-photo").first();
+  await expect(photo).toHaveClass(/is-loaded/, { timeout: 20000 });
+  expect(new URL((await photo.getAttribute("src"))!, page.url()).searchParams.get("url")).toBe("https://cdn.nba.com/headshots/nba/latest/260x190/1629029.png");
+  expect(await photo.evaluate(img => (img as HTMLImageElement).naturalWidth)).toBeGreaterThan(20);
+  await expect(page.locator(".give-side .avatar-initials")).toBeHidden();
+  await page.getByRole("button", { name: "Player comparison", exact: true }).click();
+  await expect(page.locator(".comparison-table .avatar-photo").first()).toHaveClass(/is-loaded/, { timeout: 20000 });
+});
+
+test("unavailable player photos retain initials without breaking the analyzer", async ({ page }) => {
+  await page.route("**/_next/image?**", route => route.abort("failed"));
+  await page.reload();
+  await expect(page.locator(".app-shell")).toHaveAttribute("data-ready", "true");
+  await expect(page.locator(".give-side .avatar-photo")).toHaveCount(0);
+  await expect(page.locator(".give-side .avatar-initials")).toBeVisible();
+  await expect(page.locator(".give-side .avatar-initials")).toHaveText("LD");
+  await expect(page.locator(".category-table tbody tr")).toHaveCount(8);
+  await page.getByRole("button", { name: "Analyze trade", exact: true }).click();
+  await expect(page.locator(".category-table tbody tr")).toHaveCount(8);
+});

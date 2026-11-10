@@ -95,8 +95,13 @@ jobs, season rollover, and a public-release data-rights review remain unfinished
 scraping pipeline or paid provider subscription is installed.
 
 Credit and links to the producing repositories' declared CC BY 4.0 licenses are
-available in the app's **Data & credits** dialog. No third-party player artwork,
-proprietary ratings, or provider commentary is used.
+available in the app's **Data & credits** dialog. Player headshots come from the
+NBA CDN using mapped NBA IDs and are resized/cached by Next.js image optimization;
+these photos are separate from the dataset licenses. No photo files are stored in
+this repository or Supabase. The images
+load lazily in fixed-size circles, with initials while loading or on failure.
+Missing or malformed NBA IDs also retain initials. No proprietary ratings or
+provider commentary is used.
 
 ## Validation
 
